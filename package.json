@@ -1,6 +1,6 @@
 {
 	"name": "@rutherford/emoji",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"description": "Github emoji shortcodes with official unicode cldr metadata",
 	"main": "out.json",
 	"author": "Ethan Rutherford",

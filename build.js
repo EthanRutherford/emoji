@@ -6,7 +6,7 @@ const xml2js = require("xml2js");
 
 const fitzpatrickModifiers = [127995, 127996, 127997, 127998, 127999].map((n) => String.fromCodePoint(n));
 const toChar = (cps) => cps.map((cp) => String.fromCodePoint(Number.parseInt(cp, 16))).join("");
-const cleanup = (char) => char.replace(/[\ufe00-\ufe0f\u200d]/g, "");
+const normalizeCp = (char) => char.replace(/[\ufe00-\ufe0f\u200d]/g, "");
 
 function get(url, handler) {
 	https.get(url, {headers: {"User-Agent": "github emoji"}}, (response) => {
@@ -36,7 +36,7 @@ function parseAnnotations() {
 			xml2js.parseString(data, (_, result) => {
 				const annotations = result.ldml.annotations[0].annotation;
 				const filtered = annotations.filter((a) => a.$.type == null);
-				const mapped = filtered.map((a) => ({cp: cleanup(a.$.cp), keywords: a._}));
+				const mapped = filtered.map((a) => ({cp: normalizeCp(a.$.cp), keywords: a._}));
 				resolve(mapped);
 			});
 		});
@@ -49,7 +49,7 @@ function parseDerivedAnnotations() {
 			xml2js.parseString(data, (_, result) => {
 				const annotations = result.ldml.annotations[0].annotation;
 				const filtered = annotations.filter((a) => a.$.type == null);
-				const mapped = filtered.map((a) => ({cp: cleanup(a.$.cp), keywords: a._}));
+				const mapped = filtered.map((a) => ({cp: normalizeCp(a.$.cp), keywords: a._}));
 				resolve(mapped);
 			});
 		});
@@ -84,11 +84,11 @@ function fetchEmojiCategories() {
 						}
 					} else {
 						const codePoints = trimmed.match(codepointRegex)[1].split(" ");
-						const char = cleanup(toChar(codePoints));
-						if (seen.has(char)) {
+						const char = toChar(codePoints);
+						if (seen.has(normalizeCp(char))) {
 							continue;
 						} else {
-							seen.add(char);
+							seen.add(normalizeCp(char));
 						}
 
 						list.push({char, category: curGroup, subCategory: curSubGroup});
@@ -179,10 +179,10 @@ function processKeywords(keywords) {
 		};
 	}
 
+	const fitzpatrickRemover = new RegExp(fitzpatrickModifiers.join("|"), "g");
 	for (const annotation of derivedAnnotations) {
-		const mod = fitzpatrickModifiers.find((m) => annotation.cp.endsWith(m));
-		if (mod != null) {
-			const char = annotation.cp.replace(mod, "");
+		if (annotation.cp.match(fitzpatrickRemover) != null) {
+			const char = annotation.cp.replace(fitzpatrickRemover, "");
 			if (annotationsMap[char] != null) {
 				annotationsMap[char].fitzpatrick = true;
 			}
@@ -200,9 +200,10 @@ function processKeywords(keywords) {
 	};
 
 	for (const entry of categories) {
-		const emojiNames = githubEmoji[entry.char];
+		const normalChar = normalizeCp(entry.char);
+		const emojiNames = githubEmoji[normalChar];
 		if (emojiNames != null) {
-			const {keywords, fitzpatrick} = annotationsMap[entry.char];
+			const {keywords, fitzpatrick} = annotationsMap[normalChar];
 			output.emoji.push({
 				names: emojiNames,
 				...entry,
