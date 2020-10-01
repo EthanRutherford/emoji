@@ -1,7 +1,7 @@
 {
 	"name": "@rutherford/emoji",
-	"version": "1.0.0",
-	"description": "This repo contains the code which generates the data for @rutherford/emoji. It fetches from github's emoji api to get shortcodes,\r and combines that with category data from unicode.org as well as keywords from CLDR data.",
+	"version": "1.1.0",
+	"description": "Github emoji shortcodes with official unicode cldr metadata",
 	"main": "out.json",
 	"author": "Ethan Rutherford",
 	"license": "ISC",

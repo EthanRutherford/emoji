@@ -107,11 +107,10 @@ function fetchGithubEmoji() {
 			let data = "";
 			response.on("data", (d) => data += d);
 			response.on("end", () => {
-				const result = JSON.parse(data);
-
-				const emojis = Object.entries(result).map(([name, url]) => {
+				const out = {};
+				for (const [name, url] of Object.entries(JSON.parse(data))) {
 					if (!url.includes("unicode")) {
-						return null;
+						continue;
 					}
 
 					const parts = url.split("/");
@@ -119,10 +118,14 @@ function fetchGithubEmoji() {
 					const codePoints = filename.split(".png")[0].split("-");
 					const char = toChar(codePoints);
 
-					return [char, name];
-				}).filter((n) => n != null);
+					if (out[char] == null) {
+						out[char] = [];
+					}
 
-				resolve(Object.fromEntries(emojis));
+					out[char].push(name);
+				}
+
+				resolve(out);
 			});
 		});
 	});
@@ -144,7 +147,7 @@ function processKeywords(keywords) {
 
 	const set = new Set();
 	for (const keyword of keywords) {
-		const clean = keyword.toLowerCase().replace(/[“”()]/g, "").normalize();
+		const clean = keyword.toLowerCase().replace(/[“”()]|: /g, "").normalize();
 		const words = clean.split(" ");
 		for (const word of words) {
 			const trimmed = word.trim();
@@ -197,11 +200,11 @@ function processKeywords(keywords) {
 	};
 
 	for (const entry of categories) {
-		const emoji = githubEmoji[entry.char];
-		if (emoji != null) {
+		const emojiNames = githubEmoji[entry.char];
+		if (emojiNames != null) {
 			const {keywords, fitzpatrick} = annotationsMap[entry.char];
 			output.emoji.push({
-				name: emoji,
+				names: emojiNames,
 				...entry,
 				keywords: processKeywords(keywords),
 				fitzpatrick,

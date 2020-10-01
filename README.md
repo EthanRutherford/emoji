@@ -1,8 +1,9 @@
 # emoji
-This repo contains the code which generates the data for @rutherford/emoji. It fetches from github's emoji api to get shortcodes,
-and combines that with category data from unicode.org as well as keywords from CLDR data.
+This emoji module is built by fetching from github's emoji api to get shortcodes,
+and combining that with category data from unicode.org as well as keywords from CLDR data.
 
-Run `npm run build` to fetch fresh data from sources and compile the output.
+### building from source
+To fetch fresh data and rebuild the output, clone this repo and run `npm run build`.
 
 ### example
 ```js
@@ -13,7 +14,7 @@ const {fitzpatrickModifiers, emoji} = require("@rutherford/emoji");
 
 > emoji[0]
 {
-	name: "grinning",
+	names: ["grinning"],
 	char: "😀",
 	category: "Smileys & Emotion",
 	subCategory: "face-smiling",
