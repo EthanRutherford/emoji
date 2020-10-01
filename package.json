@@ -1,0 +1,39 @@
+{
+	"name": "@rutherford/emoji",
+	"version": "1.0.0",
+	"description": "This repo contains the code which generates the data for @rutherford/emoji. It fetches from github's emoji api to get shortcodes,\r and combines that with category data from unicode.org as well as keywords from CLDR data.",
+	"main": "out.json",
+	"author": "Ethan Rutherford",
+	"license": "ISC",
+	"scripts": {
+		"build": "node build"
+	},
+	"devDependencies": {
+		"@rutherford/eslint-config": "^1.0.3",
+		"eslint": "^6.8.0",
+		"tar-fs": "^2.1.0",
+		"xml2js": "^0.4.23",
+		"zlib": "^1.0.5"
+	},
+	"keywords": [
+		"emoji",
+		"unicode",
+		"cldr",
+		"categories",
+		"json",
+		"fitzpatrick",
+		"map",
+		"github",
+		"gh",
+		"shortcode",
+		"shortcodes"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/EthanRutherford/emoji.git"
+	},
+	"bugs": {
+		"url": "https://github.com/EthanRutherford/emoji/issues"
+	},
+	"homepage": "https://github.com/EthanRutherford/emoji#readme"
+}
